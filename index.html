@@ -4,20 +4,53 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Student Attitudes and Experiences on Campus</title>
-<meta http-equiv="refresh" content="0; url=https://script.google.com/macros/s/AKfycbznF4feFIOSUIUyVk-XPlAZ8bYuVHdAYxTpzDymnFTkOVPVYLuwVACeIev1qMaOI0YS/exec">
 <style>
   body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 40px 16px; color: #202124; background: #fff; }
   .card { max-width: 520px; margin: 0 auto; }
   h1 { font-size: 22px; margin: 0 0 12px; }
-  p { font-size: 16px; line-height: 1.5; }
-  a.btn { display: block; padding: 14px; border-radius: 8px; background: #1a73e8; color: #fff; text-align: center; text-decoration: none; font-size: 17px; }
+  p { font-size: 16px; line-height: 1.5; margin: 0 0 16px; }
+  button, a.btn { display: block; width: 100%; box-sizing: border-box; padding: 14px; border: 0; border-radius: 8px;
+    background: #1a73e8; color: #fff; text-align: center; text-decoration: none; font-size: 17px; cursor: pointer; }
+  button:disabled { background: #9aa0a6; }
+  #msg { margin-top: 16px; }
+  .note { font-size: 14px; color: #5f6368; }
 </style>
 </head>
 <body>
 <div class="card">
   <h1>Student Attitudes and Experiences on Campus</h1>
-  <p>Taking you to the survey...</p>
-  <a class="btn" href="PASTE_WEB_APP_URL_HERE">Continue to the survey</a>
+  <p>A short survey for students at colleges and universities in India, run by Group 42 (COM301A, IIIT Delhi). It takes about 10 minutes and is anonymous.</p>
+  <button id="go" onclick="start()">Start survey</button>
+  <div id="msg"></div>
 </div>
+<script>
+  // Your web app URL (ends in /exec)
+  var APP = "https://script.google.com/macros/s/AKfycbznF4feFIOSUIUyVk-XPlAZ8bYuVHdAYxTpzDymnFTkOVPVYLuwVACeIev1qMaOI0YS/exec";
+
+  function start() {
+    var b = document.getElementById("go");
+    var m = document.getElementById("msg");
+    b.disabled = true;
+    b.textContent = "Opening...";
+    m.innerHTML = "";
+    fetch(APP + "?action=assign", { credentials: "omit" })
+      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (r && r.url) {
+          window.location.href = r.url;
+          b.style.display = "none";
+          m.innerHTML = '<p>Your survey is ready.</p><a class="btn" href="' + r.url + '">Open the survey</a>';
+        } else {
+          b.style.display = "none";
+          m.innerHTML = "<p>" + ((r && r.message) || "Something went wrong. Please refresh and try again.") + "</p>";
+        }
+      })
+      .catch(function () {
+        b.disabled = false;
+        b.textContent = "Start survey";
+        m.innerHTML = '<p class="note">Could not reach the survey. Please check your connection and tap Start survey again.</p>';
+      });
+  }
+</script>
 </body>
 </html>
